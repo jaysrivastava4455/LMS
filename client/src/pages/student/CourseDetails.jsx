@@ -11,6 +11,8 @@ import YouTube from 'react-youtube';
 import { useAuth } from '@clerk/clerk-react';
 import Loading from '../../component/student/Loading';
 
+
+
 const CourseDetails = () => {
 
     const { id } = useParams()
@@ -35,7 +37,7 @@ const CourseDetails = () => {
     }
     useEffect(() => {
         fetchCourseData();
-    }, [])
+    }, [allCourses])
 
     const [openSections, setOpenSections] = useState({});
 
@@ -48,37 +50,36 @@ const CourseDetails = () => {
 
 
     const enrollCourse = async () => {
-
         try {
-
             if (!userData) {
-                return toast.warn('Login to Enroll')
+                return toast.warn('Login to Enroll');
             }
 
             if (isAlreadyEnrolled) {
-                return toast.warn('Already Enrolled')
+                return toast.warn('Already Enrolled');
             }
 
-            const token = await getToken();
+            // Mock behavior to simulate enrollment process
+            const mockResponse = {
+                success: true,
+                session_url: 'https://dummy-payment-success-page.com',
+            };
 
-            const { data } = await axios.post(backendUrl + '/api/user/purchase',
-                { courseId: courseData._id },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-
-            if (data.success) {
-                const { session_url } = data
-                window.location.replace(session_url)
+            if (mockResponse.success) {
+                const { session_url } = mockResponse;
+                toast.success('Enrollment successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.replace(session_url);
+                }, 1000); // Simulate redirection delay
             } else {
-                console.log(data.message);
-
-                toast.error(data.message)
+                console.log('Mock Error: Enrollment failed');
+                toast.error('Failed to enroll in the course');
             }
-
         } catch (error) {
-            toast.error(error.message)
+            toast.error('An unexpected error occurred');
         }
-    }
+    };
+
 
     useEffect(() => {
         fetchCourseData()
